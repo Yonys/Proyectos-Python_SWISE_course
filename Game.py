@@ -1,17 +1,42 @@
 
+#------ Para el desarrollo del juego se ocupa el archivo .csv ------#
 
-#-- Para el desarrollo del juego se ocupa el archivo csv ------
+#----- Librerías---------
 import pandas as pd
 import numpy as np
 import os
+#------------------------
 
 
+#-------------------------------------CLASES--------------------------------------------
 
-class Tablero: 
+class testVerbos:
+	"""
+	Clase Prueba que permite crear pruebas para evaluar los conocimientos
+	de vocabulario de los verbos
+	"""
+	def __init__(self,verbos):
+		self.dfVerbos = verbos
+
+	def test(self, aleatorio, nombreJugador):
+		palabInfin = self.dfVerbos["INFINITIVO"][aleatorio]
+		print(f"{nombreJugador} ingrese el pasado SIMPLE del verbo:  {palabInfin} -- ", end="")
+		pastParticiple = input()
+		revision = self.dfVerbos["PASADO SIMPLE"][aleatorio] == pastParticiple.capitalize()
+
+		if(revision):
+			print("Es correcto")
+		else:
+			print(":( :( El resultado correcto es: ", self.dfVerbos["PASADO SIMPLE"][aleatorio], "-->",self.dfVerbos["TRADUCCION"][aleatorio] )
+			print(" ")
+			print("El turno pasa al siguiente jugador".center(50,"="))
+			continuar =  input("Presione la tecla C para continuar ")
+		return revision
+
+
+class Tabler: 
     """
-    Aquí se crea el objeto tipo tablero, que es la que permite visualizar
-    el juego, marcar casillas y buscar jugador.
-    Recibe como argumento una  lista de numero de 0-9 en caracteres
+    Aquí se crea el objeto tipo tablero
 
     """
 
@@ -20,7 +45,7 @@ class Tablero:
 
     def print (self):       
         """
-        Función que imprime el self.tablero
+        Método que imprime el estado del tablero
         """
         print("     |     |     " )  
         print(f"  {self.tablero[1]}  |  {self.tablero[2]}  |  {self.tablero[3]}")
@@ -30,8 +55,23 @@ class Tablero:
         print("_____|_____|_____")
         print("     |     |     ")
         print(f"  {self.tablero[7]}  |  {self.tablero[8]}  |  {self.tablero[9]}")
+
+
+
+""" 
+    Aquí se crea el objeto tipo tablero, que es la que permite visualizar
+    el juego, marcar casillas y buscar ganador.
+    Recibe como argumento una  lista de numero de 0-9 en caracteres
+
+    """
+class Tablero(Tabler):                 #--- Herencia
+    def __init__(self, df ):
+        super().__init__(df)
         
     def marcar_casilla(self,casilla_elegida, simbolo):
+        """
+        Método que marca una casilla indicada casilla, ya sea con un cero o una X
+        """
         if (casilla_elegida == 1 and self.tablero[1] == "1"):
             self.tablero[1] = simbolo
             
@@ -60,9 +100,14 @@ class Tablero:
             self.tablero[9] = simbolo
         else:       
             print("Jugada invalida, el turno pasa al otro jugador ")
+            #TableroPuntuacion.marcar_casilla(self, casilla_elegida,simbolo)
+            a = input("Precione C para continuar: ")
             
             
     def buscar_ganador(self):
+        """
+        Método que refresa el estado del juego, el cual pueder ser: Hay ganador,
+        empate o que puede continuar jugando"""
         tablero = self.tablero
         
         if(tablero[1] == tablero[2] and tablero[2] == tablero[3]):
@@ -97,108 +142,106 @@ class Tablero:
 
 
 
-
-
-class Jugador():
+class Jugador(): 
+    """
+    Clase Jugador que crea los posibles jugadores
+    """
     def __init__(self, nombre, num):
         self.nombre = nombre
         self.num = num
     
-    def __str__(self):
+    def __str__(self):           #- Sobrecarga
         return(self.nombre)
 
-
-
-class testVerbos:
-
-    def __init__(self,verbos):
-        self.dfVerbos = verbos
-
-
-    def test(self, aleatorio, nombreJugador): #Cambiarlo
-        palabInfin = self.dfVerbos["INFINITIVO"][aleatorio]
-
-        print(f"{nombreJugador} ingrese el pasado SIMPLE del verbo:  {palabInfin} -- ",end="")
-        pastParticiple = input()
-
-        revision = self.dfVerbos["PASADO SIMPLE"][aleatorio] == pastParticiple.capitalize()
-
-        if(revision):
-            print("Es correcto")
-        else:
-            print(":( :( :( El resultado correcto es: ", self.dfVerbos["PASADO SIMPLE"][aleatorio], "-->",self.dfVerbos["TRADUCCION"][aleatorio] )
-            print(" ")
-            print("El turno pasa al siguiente jugador".center(50,"="))
-            continuar =  input("Presione la tecla C para continuar ")
-
-        return revision
+#--------------------------------------FIN CLASES ---------------------------------------
 
 
 
 
-x = ["0","1","2", "3", "4", "5","6","7","8","9"]
-TableroPuntuacion = Tablero(x)
-
-print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
-print("Diviertase jugando X-0".center(50, " "))
-print("Intrucciones".center(50, "="))
-print("En su turno usted debe escribir el pasado  SIMPLE ")
-print("Si usted falla entonces el turno pasa a su compañero")
-
-TableroPuntuacion.print()
 
 
-print("Digiten sus nombres: ")
-jugador1 = Jugador(input("Jugador 1: " ), 1)
-jugador2 = Jugador(input("Jugador 2: " ), 2)
+#-------------------------------- ---INICIO DEL JUEGO-----------------------------------
+
+decision = 1
+while (decision == 1):
+
+	#------------------------------ Pantalla -  Inicio ---------------------------------
+	x = ["0","1","2", "3", "4", "5","6","7","8","9"]
+	TableroPuntuacion = Tablero(x)
+
+	print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
+	print("!!!Diviertase jugando y aprendiendo con X-0!!!".center(50, " "))
+	print("Intrucciones".center(50, "="))
+	print("En su turno usted debe escribir el pasado  SIMPLE ")
+	print("Si usted falla entonces el turno pasa a su compañero")
+	TableroPuntuacion.print()
+	#------------------------------------------------------------------------------------
 
 
+	#--------------------- Cargando variables para iniciar a jugar------------
+	print("Digiten sus nombres: ")
+	jugador1 = Jugador(input("Jugador 1: " ), 1)
+	jugador2 = Jugador(input("Jugador 2: " ), 2)
 
-turno = 1
-estado = -1
-verbos = pd.read_csv("verbos.csv")  #cambiarlo
-
-EvaluacionIngles = testVerbos(verbos)
-n = len(verbos["INFINITIVO"])
-
-while(estado == -1):   
-    os.system ("clear") 
-    print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
-    print("Diviertase jugando X-0".center(50, " "))
-    print("Intrucciones".center(50, "="))
-    print("En su turno usted debe escribir el pasado SIMPLE")
-    print("Si usted falla entonces el turno pasa a su compañero\n")
-
-    print(jugador1, ": X")
-    print(jugador2, ": 0")
-    TableroPuntuacion.print()
-    if (turno == 1):
-        aleatorio = np.random.choice(n,1)[0]
-        if (EvaluacionIngles.test(aleatorio, jugador1.nombre)):
-            print(f"{jugador1.nombre} por favor digite la casilla donde quiere poner la X")
-            TableroPuntuacion.marcar_casilla(int(input()), "X")
-            TableroPuntuacion.print()
-            estado = TableroPuntuacion.buscar_ganador()
-
-        turno = 2
-
-    else: 
-        aleatorio = np.random.choice(n,1)[0]
-        if (EvaluacionIngles.test(aleatorio, jugador2.nombre)):
-            print(f"{jugador2.nombre} por favor digite la casilla donde quiere poner la 0")
-            TableroPuntuacion.marcar_casilla(int(input()), "0")
-            TableroPuntuacion.print()
-            estado = TableroPuntuacion.buscar_ganador()
-
-        turno = 1
-
-    if(estado==1):
-        if(turno==1):
-            print(f"Felicidades {jugador2} usted ha ganado")
-        else:
-            print(f"FelICIDADES {jugador1} USTED HA GANADO".center(50, "=")) 
-    elif(estado == 0):
-        print("Empate")
+	turno = 1
+	estado = -1
+	verbos = pd.read_csv("verbos.csv") 
+	EvaluacionIngles = testVerbos(verbos)
+	n = len(verbos["INFINITIVO"])
+	#----------------------------------------------------------------------------
 
 
+	#--------Inicio de Partida en el tablero y prueba de vocabulario por jugador ----------
+	while(estado == -1):   
+	    os.system ("clear") 
+	    print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
+	    print("Diviertase jugando X-0".center(50, " "))
+	    print("Intrucciones".center(50, "="))
+	    print("En su turno usted debe escribir el pasado SIMPLE")
+	    print("Si usted falla entonces el turno pasa a su compañero\n")
 
+	    print(jugador1, ": X")
+	    print(jugador2, ": 0")
+	    TableroPuntuacion.print()
+	    if (turno == 1):
+	        aleatorio = np.random.choice(n,1)[0]
+	        if (EvaluacionIngles.test(aleatorio, jugador1.nombre)):
+	            print(f"{jugador1.nombre} por favor digite el numero de la casilla donde quiere poner la X: ")
+	            TableroPuntuacion.marcar_casilla(int(input()), "X")
+	            TableroPuntuacion.print()
+	            estado = TableroPuntuacion.buscar_ganador()
+
+	        turno = 2
+
+	    else: 
+	        aleatorio = np.random.choice(n,1)[0]
+	        if (EvaluacionIngles.test(aleatorio, jugador2.nombre)):
+	            print(f"{jugador2.nombre} por favor digite la casilla donde quiere poner la 0")
+	            TableroPuntuacion.marcar_casilla(int(input()), "0")
+	            TableroPuntuacion.print()
+	            estado = TableroPuntuacion.buscar_ganador()
+
+	        turno = 1
+
+	    if(estado==1):
+	        if(turno==1):
+	            print(f"Felicidades {jugador2} usted ha ganado")
+	        else:
+	            print(f"FelICIDADES {jugador1} USTED HA GANADO".center(50, "=")) 
+	    elif(estado == 0):
+	        print("Empate")
+
+	#-------------------------------- Fin de la partida ------------------------------
+
+	print("\nOpciones")
+	print("1 - Otra Partida ")
+	print("2 - Salir")
+	decision = int(input("Digite el numero de la opción: "))
+
+#------------------------------------ FIN JUEGO----------------------------------------
+
+"""
+NOTA:
+Se creo la clase Tabler y Tablero por separado solo para usar herencia 
+
+"""
