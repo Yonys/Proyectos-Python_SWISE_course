@@ -1,4 +1,12 @@
 
+
+#-- Para el desarrollo del juego se ocupa el archivo csv ------
+import pandas as pd
+import numpy as np
+import os
+
+
+
 class Tablero: 
     """
     Aquí se crea el objeto tipo tablero, que es la que permite visualizar
@@ -101,14 +109,41 @@ class Jugador():
 
 
 
+class testVerbos:
+
+    def __init__(self,verbos):
+        self.dfVerbos = verbos
+
+
+    def test(self, aleatorio, nombreJugador): #Cambiarlo
+        palabInfin = self.dfVerbos["INFINITIVO"][aleatorio]
+
+        print(f"{nombreJugador} ingrese el pasado SIMPLE del verbo:  {palabInfin} -- ",end="")
+        pastParticiple = input()
+
+        revision = self.dfVerbos["PASADO SIMPLE"][aleatorio] == pastParticiple.capitalize()
+
+        if(revision):
+            print("Es correcto")
+        else:
+            print(":( :( :( El resultado correcto es: ", self.dfVerbos["PASADO SIMPLE"][aleatorio], "-->",self.dfVerbos["TRADUCCION"][aleatorio] )
+            print(" ")
+            print("El turno pasa al siguiente jugador".center(50,"="))
+            continuar =  input("Presione la tecla C para continuar ")
+
+        return revision
+
+
+
+
 x = ["0","1","2", "3", "4", "5","6","7","8","9"]
 TableroPuntuacion = Tablero(x)
 
 print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
 print("Diviertase jugando X-0".center(50, " "))
 print("Intrucciones".center(50, "="))
-print("En su turno usted debe escribir el pasado paricipio o")
-print("pasado simple del verbo, si usted falla entonces el turno pasa a su compañero\n\n")
+print("En su turno usted debe escribir el pasado  SIMPLE ")
+print("Si usted falla entonces el turno pasa a su compañero")
 
 TableroPuntuacion.print()
 
@@ -118,36 +153,52 @@ jugador1 = Jugador(input("Jugador 1: " ), 1)
 jugador2 = Jugador(input("Jugador 2: " ), 2)
 
 
+
 turno = 1
 estado = -1
+verbos = pd.read_csv("verbos.csv")  #cambiarlo
 
+EvaluacionIngles = testVerbos(verbos)
+n = len(verbos["INFINITIVO"])
 
-while(estado == -1):
-    
+while(estado == -1):   
+    os.system ("clear") 
+    print("\nBienvenido al lugar donde aprender ingles es un juego".upper().center(50," "))
+    print("Diviertase jugando X-0".center(50, " "))
+    print("Intrucciones".center(50, "="))
+    print("En su turno usted debe escribir el pasado SIMPLE")
+    print("Si usted falla entonces el turno pasa a su compañero\n")
+
+    print(jugador1, ": X")
+    print(jugador2, ": 0")
+    TableroPuntuacion.print()
     if (turno == 1):
-        print(f"{jugador1.nombre} por favor digite la casilla donde quiere poner la X")
-        TableroPuntuacion.marcar_casilla(int(input()), "X")
+        aleatorio = np.random.choice(n,1)[0]
+        if (EvaluacionIngles.test(aleatorio, jugador1.nombre)):
+            print(f"{jugador1.nombre} por favor digite la casilla donde quiere poner la X")
+            TableroPuntuacion.marcar_casilla(int(input()), "X")
+            TableroPuntuacion.print()
+            estado = TableroPuntuacion.buscar_ganador()
+
         turno = 2
 
     else: 
-        print(f"{jugador2.nombre} por favor digite la casilla donde quiere poner la 0")
-        TableroPuntuacion.marcar_casilla(int(input()), "0")
+        aleatorio = np.random.choice(n,1)[0]
+        if (EvaluacionIngles.test(aleatorio, jugador2.nombre)):
+            print(f"{jugador2.nombre} por favor digite la casilla donde quiere poner la 0")
+            TableroPuntuacion.marcar_casilla(int(input()), "0")
+            TableroPuntuacion.print()
+            estado = TableroPuntuacion.buscar_ganador()
+
         turno = 1
 
-    TableroPuntuacion.print()
-    estado = TableroPuntuacion.buscar_ganador()
+    if(estado==1):
+        if(turno==1):
+            print(f"Felicidades {jugador2} usted ha ganado")
+        else:
+            print(f"FelICIDADES {jugador1} USTED HA GANADO".center(50, "=")) 
+    elif(estado == 0):
+        print("Empate")
 
 
-
-if(estado==1):
-    if(turno==1):
-        print(f"Felicidades {jugador2} usted ha ganado")
-    else:
-        print(f"Felicidades {jugador1} usted ha ganado") 
-else:
-    print("Empate")
-
-
-
-    
 
