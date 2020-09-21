@@ -6,3 +6,8 @@ El juego consiste en una combinación de X-0 con pruebas de vocabulario de verbo
 sacado al azar de un archivo .csv, se valida si la palabra en pasado es correcta, si lo es, entonces se le da la opción al usuario de marcar una casilla 
 de acuerdo a su simbolo, sino, el turno pasa a la siguiente persona. Se repite el proceso hasta que hay un ganador en el tablero de  X-0.
 El juego está diseñado para 2 jugadores.
+
+## **X_0_Pygame.py**
+Es la implementación de X-0 con las herramientas de pygame. Para correr el juego se ocupa la carpeta de imagenes. Esta programado en python 3.5
+
+
